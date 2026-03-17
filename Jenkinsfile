@@ -1,10 +1,5 @@
-@Library('Shared')_
-pipeline{
-    agent { label 'dev-server' }
+@Library('Shared') _
 
-    triggers {
-        githubPush()
-    }@Library('Shared') _
 pipeline {
     agent any
 
@@ -35,34 +30,6 @@ pipeline {
 
         stage("Deploy") {
             steps {
-                deploy()
-            }
-        }
-    }
-}
-
-    stages{
-        stage("Code clone"){
-            steps{
-                sh "whoami"
-                clone("https://github.com/Avanish9795/django-notes-app.git', branch: 'main")
-            }
-        }
-
-        stage("Code Build"){
-            steps{
-                dockerbuild("notes-app","latest")
-            }
-        }
-
-        stage("Push to DockerHub"){
-            steps{
-                dockerpush("dockerHubCreds","notes-app","latest")
-            }
-        }
-
-        stage("Deploy"){
-            steps{
                 deploy()
             }
         }
