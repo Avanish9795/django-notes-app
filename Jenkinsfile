@@ -1,19 +1,36 @@
+@Library('Shared') _
+
 pipeline {
     agent any
 
-    environment {
-        PATH = "/usr/bin:/usr/local/bin:/bin:/usr/sbin"
+    triggers {
+        githubPush()
     }
 
     stages {
-        stage('Build') {
+
+        stage("Code clone") {
             steps {
-                sh '''
-                echo "PATH=$PATH"
-                which docker
-                docker --version
-                docker build -t avanish9795/notes-app:latest .
-                '''
+                sh "whoami"
+                clone("https://github.com/Avanish9795/django-notes-app.git", "main")
+            }
+        }
+
+        stage("Code Build") {
+            steps {
+                dockerbuild("notes-app", "latest")
+            }
+        }
+
+        stage("Push to DockerHub") {
+            steps {
+                dockerpush("dockerHubCreds", "notes-app", "latest")
+            }
+        }
+
+        stage("Deploy") {
+            steps {
+                deploy()
             }
         }
     }
